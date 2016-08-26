@@ -1,6 +1,6 @@
 """
 Trains the specified network architecture for the given number of epochs and
-desired learning rate.
+desired learning rate. Ensuing, predictions are made based off test data.
 
 Args:
 1. Network architecture
@@ -13,7 +13,6 @@ Args:
 	-- between 0 and 1
 """
 
-import cv2
 import numpy as np
 import sys
 
@@ -24,6 +23,7 @@ from keras.callbacks import ModelCheckpoint
 from keras import backend as K
 
 from data import train_data, test_data
+from preprocess import preprocess
 
 import matplotlib
 matplotlib.use('Agg')
@@ -32,6 +32,9 @@ import matplotlib.pyplot as plt
 smooth = 1.
 
 def dice_coef(y_true, y_pred):
+	"""
+	Value of the Dice Coefficient based two datasets.
+	"""
     y_true_f = K.flatten(y_true)
     y_pred_f = K.flatten(y_pred)
     intersection = K.sum(y_true_f * y_pred_f)
@@ -40,17 +43,10 @@ def dice_coef(y_true, y_pred):
 def dice_coef_loss(y_true, y_pred):
     return -dice_coef(y_true, y_pred)
 
-def preprocess(imgs):
-    imgs_p = np.ndarray((imgs.shape[0], imgs.shape[1], img_rows, img_cols),
-    	dtype=np.uint8)
-
-    for i in range(imgs.shape[0]):
-        imgs_p[i, 0] = cv2.resize(imgs[i, 0], (img_cols, img_rows),
-        	interpolation=cv2.INTER_CUBIC)
-    return imgs_p
-
 def train(model, batch_size, num_epochs):
-
+	"""
+	Train the selected model for a specified number of epochs and batch size.
+	"""
 	print '-'*30
     print 'Creating and compiling model ...'
     print '-'*30
@@ -84,6 +80,9 @@ def train(model, batch_size, num_epochs):
     print '-'*30
 
 def predict(model):
+	"""
+	Predicts masks on test images and saves them locally.
+	"""
 
 	imgs_test, imgs_id_test = load_test_data()
 	imgs_test = preprocess(imgs_test)
@@ -110,7 +109,7 @@ def predict(model):
     for i in range(len(imgs_mask_test)):
 
 	    plt.imshow(np.asarray(imgs_mask_test[i][0]))
-	    plt.savefig(os.path.join(PATH, 'mask_%d.png' % i))
+	    plt.savefig(os.path.join(PATH, 'output_mask_%d.png' % i))
 
 if __name__ == '__main__':
 	assert len(sys.argv) == 5
@@ -123,9 +122,11 @@ if __name__ == '__main__':
 	if architecture == 'unet':
 		from networks import unet
 		model = unet(learning_rate)
+		image_rows, image_cols = 
 	elif architecture == 'alexnet'
 		from networks import alexnet
 		model = alexnet(learning_rate)
+		image_rows, image_cols = 64, 96
 	elif architecture == 'vgg'
 		from networks import vgg
 		model = vgg(learning_rate)
