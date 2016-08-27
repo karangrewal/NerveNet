@@ -2,10 +2,12 @@
 
 Our project segments out the nerve structures in X-ray medical images.
 
-Input:
+#### Sample Input:
+
 ![alt text](https://github.com/karangrewal/NerveNet/blob/master/raw_img/input.png "Input")
 
-Input:
+#### Resulting Output:
+
 ![alt text](https://github.com/karangrewal/NerveNet/blob/master/raw_img/output.png "Output")
 
 ### Convolutional Neural Networks
